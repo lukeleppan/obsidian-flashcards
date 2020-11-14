@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-flashcards",
+	"name": "Flashcards",
+	"version": "0.1.0",
+	"minAppVersion": "0.9.12",
+	"description": "A plugin that generates flashcards from your vault.",
+	"author": "Luke Leppan",
+	"authorUrl": "https://lukeleppan.com",
+	"isDesktopOnly": false
+}
