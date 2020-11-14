@@ -3,5 +3,10 @@ import { VIEW_TYPE_FLASHCARDS } from "./constants";
 
 export default class ObsidianFlashCards extends Plugin {
   onload() {}
-  onunload() {}
+
+  onunload() {
+    this.app.workspace
+      .getLeavesOfType(VIEW_TYPE_FLASHCARDS)
+      .forEach((leaf) => leaf.detach());
+  }
 }
