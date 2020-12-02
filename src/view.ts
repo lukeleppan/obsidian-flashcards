@@ -1,6 +1,6 @@
 import { FileView, TFile, ItemView, WorkspaceLeaf } from "obsidian";
 
-import type Flashcards from "./Flashcards.svelte";
+import Flashcards from "./Flashcards.svelte";
 import { VIEW_TYPE_FLASHCARDS, VIEW_ICON } from "./constants";
 
 export default class FlashcardsView extends ItemView {
@@ -26,5 +26,14 @@ export default class FlashcardsView extends ItemView {
       this.flashcards.$destroy();
     }
     return Promise.resolve();
+  }
+
+  async onOpen() {
+    const vault = this.app.vault;
+
+    this.flashcards = new Flashcards({
+      target: (this as any).contentEl,
+      props: { vault },
+    });
   }
 }

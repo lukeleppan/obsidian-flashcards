@@ -1,31 +1,78 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import type { Vault } from "obsidian";
+  import type { flashcard } from "./flashcard";
+  import { FlashcardGenerator } from "./flashcard-generator";
+  import { onDestroy, onMount } from "svelte";
+
+  export let vault: Vault;
+  let flashcards: flashcard[] = [];
+
+  vault.getName();
+
+  async function generateCards(): Promise<void> {
+    const flashcardGenerator: FlashcardGenerator = new FlashcardGenerator(
+      vault
+    );
+    this.flashcards = flashcardGenerator.generateFlashcards();
+  }
+
+  async function loadCards(): Promise<void> {
+    const flashcardGenerator: FlashcardGenerator = new FlashcardGenerator(
+      vault
+    );
+    this.flashcard = flashcardGenerator.loadCards();
+  }
+
+  onMount(() => {
+    this.loadCards();
+  });
 
   onDestroy(() => {});
 </script>
 
 <style>
+  .container {
+    --color-background-heading: transparent;
+    --color-background-day: transparent;
+    --color-background-day-empty: var(--background-secondary-alt);
+    --color-background-day-active: var(--interactive-accent);
+    --color-background-day-hover: var(--interactive-hover);
+    --color-dot: var(--text-muted);
+    --color-arrow: currentColor;
+    --color-text-title: var(--text-normal);
+    --color-text-heading: var(--text-normal);
+    --color-text-day: var(--text-normal);
+    --color-text-today: var(--text-accent);
+  }
+
+  .container {
+    overflow-y: auto;
+    padding: 0 16px;
+  }
+
+  .title {
+    color: var(--color-text-title);
+    margin-right: 4px;
+    text-align: left;
+  }
+
+  .sync-button {
+    align-self: right;
+  }
 </style>
 
 <div id="flashcards-container" class="container">
-  <h2 class="title">
-    <div class="arrow mr-2" aria-label="Previous Month">
-      <svg
-        class="arrow"
-        focusable="false"
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 320 512"><path
-          fill="currentColor"
-          d="M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z" /></svg>
-    </div>
-    <div class="arrow ml-2" aria-label="Next Month">
-      <svg
-        role="img"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 320 512"><path
-          fill="currentColor"
-          d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z" /></svg>
-    </div>
-  </h2>
+  <div class="header">
+    <h2 class="title">Flashcards</h2>
+    <button class="sync-button" on:click={generateCards}>Generate Flashcards</button>
+  </div>
+  <hr class="solid" />
+  {#if !(flashcards === [])}
+    {#each flashcards as flashcard, i}
+      <div class="card">
+        <h4 class="title">{flashcard.shown}</h4>
+        <p>{flashcard.hidden}</p>
+      </div>
+    {/each}
+  {/if}
 </div>
